@@ -16,15 +16,15 @@ from nillion_client import (
 
 from dotenv import load_dotenv
 
-home = os.getenv("HOME")
-# load the local .env file containing the the configs of the local devnet
-load_dotenv(f"{home}/.config/nillion/nillion-devnet.env")
-
-
 async def main():
-    network = Network.from_config("devnet")
+    network = Network(
+        chain_id="nillion-chain-testnet-1",
+        nilvm_grpc_endpoint="https://node-1.nilvm-testnet-1.nillion-network.testnet.nillion.network:14311",
+        chain_grpc_endpoint="https://testnet-nillion-grpc.lavenderfive.com",
+    )
+    print("testnet network is:", network)
     #Create payments configuration
-    nilchain_key: str = os.getenv("NILLION_NILCHAIN_PRIVATE_KEY_0")
+    nilchain_key: str = "9764769ba5226a350f0ddc01c3426951cfc0e582f905b6e18fb927db4ae04561"
     payer = NilChainPayer(
         network,
         wallet_private_key=NilChainPrivateKey(bytes.fromhex(nilchain_key)),
@@ -39,7 +39,8 @@ async def main():
     program_mir_path = f"../nada_quickstart_programs/target/{program_name}.nada.bin"
 
     # Adding funds to the client balance
-    funds_amount = 30000000
+    # CARFEUL! WHEN DOING client.add_funds(funds_amount), it takes from your balance, and gives it to the client.
+    funds_amount = 1000
     print(f"💰 Adding some funds to the client balance: {funds_amount} uNIL")
     await client.add_funds(funds_amount)
 
